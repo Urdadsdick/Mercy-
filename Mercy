@@ -1,0 +1,145 @@
+-- Load the Orion Library
+local OrionLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/shlexware/Orion/main/source"))()
+
+-- Create Window
+local Window = OrionLib:MakeWindow({
+    Name = "Goat Hub for Roblox",
+    HidePremium = false,
+    SaveConfig = true,
+    ConfigFolder = "GoatHub"
+})
+
+-- Add custom background image
+local background = Instance.new("ImageLabel")
+background.Parent = Window
+background.Size = UDim2.new(1, 0, 1, 0)  -- Set the background to fill the entire window
+background.Position = UDim2.new(0, 0, 0, 0)  -- Position it at the top left corner
+background.Image = "rbxassetid://YOUR_SENTINEL_BACKGROUND_IMAGE_ID"  -- Replace with your custom image ID
+background.BackgroundTransparency = 1  -- Make sure the background is transparent
+background.ZIndex = -1  -- Place the background behind other UI elements
+
+-- Global Toggles
+_G.killAura = false
+_G.onePunch = false
+_G.autoPickup = false
+_G.godmode = false
+_G.autoFarm = false
+_G.autoSell = false
+_G.teleportToStore = false
+_G.fly = false
+_G.speed = 50
+_G.invisible = false
+_G.antiAFK = false
+_G.espEnabled = false
+_G.outlineEnabled = false
+
+-- Function to enable ESP
+function enableESP()
+    while _G.espEnabled do
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character and player.Character:FindFirstChild("Head") then
+                -- Create Billboard GUI for name display
+                if not player.Character.Head:FindFirstChild("ESPName") then
+                    local billboard = Instance.new("BillboardGui")
+                    billboard.Name = "ESPName"
+                    billboard.Adornee = player.Character.Head
+                    billboard.Size = UDim2.new(1, 0, 1, 0)
+                    billboard.StudsOffset = Vector3.new(0, 3, 0)
+                    billboard.AlwaysOnTop = true
+
+                    local nameLabel = Instance.new("TextLabel", billboard)
+                    nameLabel.Text = player.Name
+                    nameLabel.Size = UDim2.new(1, 0, 1, 0)
+                    nameLabel.BackgroundTransparency = 1
+                    nameLabel.TextColor3 = Color3.fromRGB(255, 255, 255)
+                    nameLabel.TextScaled = true
+                    billboard.Parent = player.Character.Head
+                end
+            end
+        end
+        wait(1)
+    end
+end
+
+-- Function to enable Wallhack (Outline Players in Red)
+function enableOutline()
+    while _G.outlineEnabled do
+        for _, player in pairs(game.Players:GetPlayers()) do
+            if player ~= game.Players.LocalPlayer and player.Character then
+                for _, part in pairs(player.Character:GetChildren()) do
+                    if part:IsA("BasePart") and not part:FindFirstChild("Outline") then
+                        local outline = Instance.new("Highlight", part)
+                        outline.Name = "Outline"
+                        outline.FillTransparency = 1
+                        outline.OutlineTransparency = 0
+                        outline.OutlineColor = Color3.fromRGB(255, 0, 0) -- Red color
+                    end
+                end
+            end
+        end
+        wait(1)
+    end
+end
+
+-- Function to disable ESP
+function disableESP()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character and player.Character:FindFirstChild("Head") then
+            local espName = player.Character.Head:FindFirstChild("ESPName")
+            if espName then
+                espName:Destroy()
+            end
+        end
+    end
+end
+
+-- Function to disable Wallhack
+function disableOutline()
+    for _, player in pairs(game.Players:GetPlayers()) do
+        if player.Character then
+            for _, part in pairs(player.Character:GetChildren()) do
+                if part:IsA("BasePart") and part:FindFirstChild("Outline") then
+                    part.Outline:Destroy()
+                end
+            end
+        end
+    end
+end
+
+-- ESP Tab
+local espTab = Window:MakeTab({
+    Name = "ESP",
+    Icon = "rbxassetid://6034816636", -- Star Icon
+    PremiumOnly = false
+})
+
+espTab:AddToggle({
+    Name = "Enable ESP (Player Names)",
+    Default = false,
+    Callback = function(Value)
+        _G.espEnabled = Value
+        if Value then
+            enableESP()
+        else
+            disableESP()
+        end
+    end
+})
+
+espTab:AddToggle({
+    Name = "Enable Wallhack (Red Outline)",
+    Default = false,
+    Callback = function(Value)
+        _G.outlineEnabled = Value
+        if Value then
+            enableOutline()
+        else
+            disableOutline()
+        end
+    end
+})
+
+-- Existing Tabs (Emote, Trolling, AutoFarm)...
+-- [No changes to those, they remain as-is in the provided script]
+
+-- End of script
